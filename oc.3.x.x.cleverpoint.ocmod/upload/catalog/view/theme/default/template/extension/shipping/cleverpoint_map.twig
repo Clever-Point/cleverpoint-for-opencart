@@ -1,0 +1,116 @@
+<div id="cleverwrap">
+  <div id="clevermapwrap">
+	<div id="clevermap" style="height:500px;"></div>
+	<div id="cleverpoint_locker">
+	  {% if defaultLockerAddress %}
+		<b>{{ text_selected_point }}</b>: {{ defaultLockerAddress }}
+	  {% endif %}
+	</div>
+  </div>
+  <div class="cleverpoint_methods">
+	<h2>Επιλογή εταιρείας μεταφοράς δέματος προς CleverPoint</h2>
+	{% if cleverpoint_shipping_methods %}
+	  {% for shipping_method in cleverpoint_shipping_methods %}
+		<p><strong>{{ shipping_method.title }}</strong></p>
+		{% if not shipping_method.error %}
+		  {% for quote in shipping_method.quote %}
+			<div class="radio">
+			  <label>
+				{% if quote.code == cleverpoint_shipping_method %}
+				  <input type="radio" name="shipping_method_cleverpoint" value="{{ quote.code }}" checked="checked" />
+				{% else %}
+				  <input type="radio" name="shipping_method_cleverpoint" value="{{ quote.code }}" />
+				{% endif %}
+				{{ quote.title }} - {{ quote.text }}
+			  </label>
+			</div>
+		  {% endfor %}
+		{% else %}
+		  <div class="alert alert-danger alert-dismissible">{{ shipping_method.error }}</div>
+		{% endif %}
+	  {% endfor %}
+	{% endif %}
+	<div id="cleverpointcosts"></div>
+  </div>
+</div>
+<script type="text/javascript">
+	clevermap({
+		selector: '#clevermap',
+		cleverPointKey: '{{ cleverpointkey }}',
+		arcgisMapKey: '{{ arcgiskey }}',
+		googleMapKey: '{{ googlekey }}',
+		header: {% if headerbar %} true {% else %} false {% endif %},
+		defaultCoordinates: null,
+		
+		{% if defaultAddress %}
+			defaultAddress: '{{ defaultAddress }}',
+		{% else %}
+			defaultAddress: null,
+		{% endif %}
+	   
+		
+		{% if defaultLockerId %}
+			defaultCleverPoint: '{{ defaultLockerId }}',
+		{% else %}
+			defaultCleverPoint: null,
+		{% endif %}
+		
+		singleSelect: {% if singleSelect %} true {% else %} false {% endif %},
+		
+		display: {
+			addressBar:	{% if addressBar %} true {% else %} false {% endif %},
+			pointList: {% if pointList %} true {% else %} false {% endif %},
+			pointInfoType: '{{ pointInfoType }}'
+		},
+		
+		filters: {
+			codAmount: 0
+		},
+		onclear: () => {
+			$('#cleverpoint_locker').html('');
+		},
+		onselect: (point) => {
+		
+			console.log(point);
+		
+			var station_name = point.ShortName;
+			var station_address = point.AddressLine1;
+			var station_city = point.City;
+			var station_postcode = point.ZipCode;
+			var station_zone = point.Perfecture;
+			var station_id = point.StationId;
+			var station_prefix = point.Prefix;
+			var is_cod = point.IsOperationalForCOD;
+
+			var post_data = {
+				station_name: station_name,
+				station_address: station_address,
+				station_city: station_city,
+				station_postcode: station_postcode,
+				station_zone: station_zone,
+				station_id: station_id,
+				station_prefix: station_prefix,
+				is_cod: is_cod
+			};
+
+			$.ajax({
+				url: 'index.php?route=extension/shipping/cleverpoint/setStation',
+				type: 'post',
+				data: JSON.stringify(post_data),
+				contentType: 'application/json',
+				dataType: 'json',
+				cache: false,
+				success: function(json) {
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+				}
+			});
+
+			var lockerLoc = '<b>{{ text_selected_point }}</b>: ' + station_name + ' [' + station_address + ']';
+			$('#cleverpoint_locker').html(lockerLoc);
+		},
+		oninitialized: () => {
+			getCosts();
+		}
+	});
+</script>

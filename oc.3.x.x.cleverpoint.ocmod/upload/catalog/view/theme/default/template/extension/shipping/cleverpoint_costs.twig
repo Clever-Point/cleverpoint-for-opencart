@@ -1,0 +1,7 @@
+{% if cleverpoint_costs %}
+	<ul>
+		{% for cleverpoint_cost in cleverpoint_costs %}
+			<li>{{ cleverpoint_cost.text }}: <b>{{ cleverpoint_cost.value }}</b></li>
+		{% endfor %}
+	</ul>
+{% endif %}

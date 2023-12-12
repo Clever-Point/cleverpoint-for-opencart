@@ -1,0 +1,37 @@
+{% if tracking_data %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <tr>
+                <th>{{ text_station_name }}</th>
+                <th>{{ text_timedate }}</th>
+                <th>{{ text_tracking_notes }}</th>
+            </tr>
+            {% for data in tracking_data %}
+                <tr>
+                    <td>{{ data.StationName }}</td>
+                    <td>{{ data.Timestamp|date('d-m-Y H:i:s') }}</td>
+                    <td>{{ data.TrackingNote }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endif %}
+
+{% if PODData %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <tr>
+                <th>{{ text_delivered_to }}</th>
+                <th>{{ text_timedate }}</th>
+                <th>{{ text_station_name }}</th>
+                <th>{{ text_tracking_status }}</th>
+            </tr>
+            <tr>
+                <td>{{ PODData.DeliveredTo }}</td>
+                <td>{{ PODData.DeliveryDateTime|date('d-m-Y H:i:s') }}</td>
+                <td>{{ PODData.StationName }}</td>
+                <td><span class="label label-success">{{ text_tracking_delivered }}</span></td>
+            </tr>
+        </table>
+    </div>
+{% endif %}

@@ -1,0 +1,374 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<h1>{{ heading_title_report }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+  
+	<div class="container-fluid">
+		{% if error %}
+			<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+		{% endif %}
+		
+		{% if success %}
+			<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+			</div>
+		{% endif %}
+		<div class="panel panel-default">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+					<th style="width:1%"></th>
+                    <th class="text-center" style="width:1%">
+						{{ column_order_id }}
+					</th>
+                    <th class="text-left">{{ column_customer }}</th>
+                    <th class="text-center" style="width:1%">{{ column_order_status }}</th>
+                    <th class="text-center" style="width:1%">{{ column_total }}</th>
+                    <th class="text-center" style="width:1%">{{ column_total_products }}</th>
+                    <th class="text-center" style="width:1%">{{ column_date_added }}</th>
+                    <th class="text-left" style="width:15%">{{ column_vouchers }}</th>
+					<th class="text-center"  style="width:15%">{{ column_cleverpoint_status }}</th>
+                    <th class="text-center"  style="width:15%">{{ column_station_id }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                {% if orders %}
+                {% for order in orders %}
+                <tr class="cleverpoint_row">
+					<td>
+						<a href="{{ order.view }}" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-primary">
+							<i class="fa fa-eye"></i>
+						</a>
+					</td>
+					<td class="text-center" data-order-id="{{ order.order_id }}">
+						{{ order.order_id }}
+					</td>
+					<td class="text-left">{{ order.customer }}</td>
+					<td class="text-center">{{ order.order_status }}</td>
+					<td class="text-center">{{ order.total }}</td>
+					<td class="text-center">
+						<span class="badge">
+							{{ order.total_products }}
+						</span>
+					</td>
+					<td class="text-center">{{ order.date_added }}</td>
+					<td class="text-left parcels-td">
+						{% if order.shipment_awb %}
+							<a href="#" data-voucher="{{ order.shipment_awb }}" onclick="getVoucher('{{ order.shipment_awb }}'); return false;" class="btn btn-default voucber-button">
+								<b>{{ order.shipment_awb }}</b>
+								<span class="glyphicon glyphicon-barcode"></span>
+							</a>
+							<div class="mt-2">
+								<div class="actions">
+									<a class="label label-info trackTrigger" href="#" data-trackid="{{ order.shipment_awb }}">
+										<span class="glyphicon glyphicon-eye-open"></span>
+										<b>{{ text_track_order }}</b>
+									</a>
+									<a class="label label-danger cancelTrigger" href="#" data-trackid="{{ order.shipment_awb }}" data-orderid="{{ order.order_id }}">
+										<span class="glyphicon glyphicon-remove-sign"></span>
+										<b>{{ text_cancel_order }}</b>
+									</a>
+								</div>
+								<div class="tracking_data">
+								</div>
+							</div>
+						{% endif %}
+					</td>
+					<td class="text-center">
+						{% if order.status != 2 %}
+							{% if order.is_cod %}
+								<div class="alert alert-warning" role="alert">
+								  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+								  {{ text_cod }}
+								</div>
+							{% endif %}
+							<div>
+								<div class="flex-buttons">
+									<select name="tracking" class="form-control">
+										<option value="">- {{ text_carrier }} -</option>
+										{% for carrier in carriers %}
+											<option value="{{ carrier.Id }}_{{ carrier.Name }}">{{ carrier.Name }}</option>
+										{% endfor %}
+									</select>
+									<input type="number" value="1" name="tracking_amount" class="form-control form-control-sm">
+								</div>
+								<div class="voucher-inputs"></div>
+								<a href="#" class="createShipping btn btn-primary w-full mt-2" data-order_id="{{ order.order_id }}">
+									{{ text_create_shipping }} <span class="badge"><span class="glyphicon glyphicon-send"></span></span>
+								</a>
+							</div>
+						{% else %}
+							<div class="alert alert-success created-voucher" role="alert">{{ text_cleverpoint_shipment_found }}</div>
+						{% endif %}
+					</td>
+					<td class="text-center">
+						{% if order.station_name %}
+							<div class="alert alert-info">{{ order.station_name  }}: {{ order.station_address }}, {{ order.station_city  }} [<b>{{ order.station_prefix }}</b>]</div>
+						{% endif %}
+					</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                  <td class="text-center" colspan="11">{{ text_no_results }}</td>
+                </tr>
+                {% endif %}
+                  </tbody>
+                
+              </table>
+            </div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6 text-left">{{ pagination }}</div>
+			<div class="col-sm-6 text-right">{{ results }}</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="trackModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ text_close }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style type="text/css">
+	.mt-2 {
+		margin-top:1rem;
+	}	
+	.mb-1 {
+		margin-bottom:0.5rem;
+	}	
+	.mb-2 {
+		margin-bottom:1rem;
+	}
+	.w-full {
+		width:100%;
+	}
+	a.createShipping.loading {
+		opacity: 0.5;
+		pointer-events: none !important;
+	}
+	.actions {
+		display: flex;
+		column-gap: .5rem;
+	}
+
+	.actions > a {
+		flex: 0 0 50%;
+		max-width: 50%;
+		display: flex;
+		white-space: normal;
+		padding: 0.5rem;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		line-height:normal;
+	}
+	.actions > a > span {
+		flex: 0;
+		padding-right: 0.5rem;
+		margin-right: 0.5rem;
+		border-right: solid 1px rgba(0,0,0,0.2);
+	}
+	.actions > a > b {
+		flex: 1;
+	}
+	.form-control.error {
+		border-color: #dd0000;
+	}
+	.voucber-button {
+		display: flex;
+		align-items: center;
+	}
+
+	.voucber-button b {
+		flex: 1;
+		text-align: left;
+	}
+	.created-voucher {
+		font-size: 12px;
+	}
+	.flex-buttons {
+		display: flex;
+	}
+
+	input.form-control.form-control-sm {
+		flex: 0 0 30%;
+		max-width: 30%;
+		text-align: center;
+		font-weight: bold;
+	}
+	.voucher-inputs {
+		margin-top: 1rem;
+	}
+</style>
+<script>
+	$('.createShipping').on('click', function (e) {
+		e.preventDefault();
+
+		let button = $(this);
+		let master = $(this).closest('td');
+		let parent = button.closest('tr.cleverpoint_row');
+		
+		var order_id = button.data('order_id');
+		var tracking = master.find('select[name="tracking"]').val();
+		
+		var items = [];
+
+		master.find('.voucher-inputs input[name^="tracking_no"]').each(function () {
+			var voucher = $(this).val();
+			var weightInput = $(this).closest('.flex-buttons').find('input[name^="tracking_weight"]');
+			var weight = weightInput.val();
+			
+			if(voucher && weight) {
+				items.push({
+					voucher: voucher,
+					weight: weight
+				});
+			}
+		});
+		
+		var amount = master.find('input[name="tracking_amount"]').val();
+		
+		master.find('input, select').removeClass('error');
+		$('.alert-dismissible').remove();
+		
+		if(!tracking || !items.length) {
+			master.find('input, select').addClass('error');
+			$('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_required_shipping }} <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+			return false;
+		}
+
+		button.prop('disabled', true).addClass('loading');
+		
+		var postData = {
+			order_id: order_id,
+			tracking: tracking,
+			amount: amount,
+			items: items
+		};
+
+		$.ajax({
+			url: 'index.php?route=extension/shipping/cleverpoint/createShipping&user_token={{ user_token }}',
+			type: 'post',
+			data: postData,
+			dataType: 'json',
+			cache: false,
+			complete: function () {
+			},
+			success: function (json) {
+				if(json.error) {
+					$('.alert-dismissible').remove();
+					$('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json.error + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					button.prop('disabled', false).removeClass('loading');
+					return false;
+				}
+				location.href = location.href;
+			},
+			error: function (xhr, textStatus, errorThrown) {
+			}
+		});
+	});
+
+	$('.trackTrigger').on('click', function (e) {
+		e.preventDefault();
+
+		let master = $(this).closest('td');
+		let container = master.find('.tracking_data');
+		let trackid = $(this).data('trackid');
+		
+		var postData = {
+			voucher: trackid
+		};
+		
+		$.ajax({
+			url: 'index.php?route=extension/shipping/cleverpoint/trackShipping&user_token={{ user_token }}',
+			type: 'post',
+			data: postData,
+			dataType: 'html',
+			cache: false,
+			complete: function () {
+			},
+			success: function (html) {
+				$('#trackModal .modal-body').html(html);
+				$('#trackModal').modal('show');			
+			},
+			error: function (xhr, textStatus, errorThrown) {
+			}
+		});
+		
+	});	
+	
+	$('.cancelTrigger').on('click', function (e) {
+		e.preventDefault();
+		
+		if (!confirm('{{ text_cancel_confirm }}')) {
+			return;
+		}
+
+		let master = $(this).closest('td');
+		let container = master.find('.tracking_data');
+		let trackid = $(this).data('trackid');
+		let order_id = $(this).data('orderid');
+
+		var postData = {
+			voucher: trackid,
+			order_id: order_id
+		};
+
+		$.ajax({
+			url: 'index.php?route=extension/shipping/cleverpoint/cancelShipment&user_token={{ user_token }}',
+			type: 'post',
+			data: postData,
+			dataType: 'json',
+			cache: false,
+			complete: function () {},
+			success: function (json) {
+				location.href = location.href;
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				console.error('AJAX Error:', textStatus, errorThrown);
+			}
+		});
+	});
+	
+	$('input[name="tracking_amount"]').on('change', function(){
+		var amount = parseInt($(this).val());
+		var trackingNoInputs = '';
+		var master = $(this).closest('td').find('.voucher-inputs');
+		
+		master.html('');
+		
+		for (var i = 0; i < amount; i++) {
+			trackingNoInputs += '<div class="flex-buttons"><input name="tracking_no[' + i + ']" placeholder="{{ text_tracking_number }}" value="" class="form-control tracking_no"><input name="tracking_weight[' + i + ']" placeholder="{{ text_weight_grams }}" value="0" class="form-control tracking_weight"></div>';
+		}
+
+		master.append(trackingNoInputs);
+	});
+
+	function getVoucher(voucher) {
+		var url = 'index.php?route=extension/shipping/cleverpoint/getVouchers&user_token={{ user_token }}&voucher=' + voucher;
+		window.open(url, '_blank');
+	}
+	
+	$('input[name="tracking_amount"]').trigger('change');
+</script>
+{{ footer }}

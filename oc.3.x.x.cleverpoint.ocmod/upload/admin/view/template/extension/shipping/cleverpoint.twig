@@ -1,0 +1,300 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-shipping" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-shipping" class="form-horizontal">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
+            <li><a href="#tab-data" data-toggle="tab">{{ tab_data }}</a></li>
+          </ul>	  
+		  
+          <div class="tab-content">
+			  <div class="tab-pane active" id="tab-general">		  
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-testkey"><span>{{ entry_testkey }}</span></label>
+					<div class="col-sm-10">
+					  <input type="text" name="shipping_cleverpoint_testkey" value="{{ shipping_cleverpoint_testkey }}" placeholder="{{ entry_testkey }}" id="input-testkey" class="form-control" />
+					</div>
+				  </div>          
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-livekey"><span>{{ entry_livekey }}</span></label>
+					<div class="col-sm-10">
+					  <input type="text" name="shipping_cleverpoint_livekey" value="{{ shipping_cleverpoint_livekey }}" placeholder="{{ entry_livekey }}" id="input-livekey" class="form-control" />
+					</div>
+				  </div>          
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-arcgiskey"><span>{{ entry_arcgiskey }}</span></label>
+					<div class="col-sm-10">
+					  <input type="text" name="shipping_cleverpoint_arcgiskey" value="{{ shipping_cleverpoint_arcgiskey }}" placeholder="{{ entry_arcgiskey }}" id="input-arcgiskey" class="form-control" />
+					</div>
+				  </div>		  
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-googlekey"><span>{{ entry_googlekey }}</span></label>
+					<div class="col-sm-10">
+					  <input type="text" name="shipping_cleverpoint_googlekey" value="{{ shipping_cleverpoint_googlekey }}" placeholder="{{ entry_googlekey }}" id="input-googlekey" class="form-control" />
+					</div>
+				  </div>		  
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-total"><span data-toggle="tooltip" title="{{ help_total }}">{{ entry_total }}</span></label>
+					<div class="col-sm-10">
+					  <input type="text" name="shipping_cleverpoint_total" value="{{ shipping_cleverpoint_total }}" placeholder="{{ entry_total }}" id="input-total" class="form-control" />
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-geo-zone">{{ entry_geo_zone }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_geo_zone_id" id="input-geo-zone" class="form-control">
+						<option value="0">{{ text_all_zones }}</option>
+						{% for geo_zone in geo_zones %}
+						{% if geo_zone.geo_zone_id == shipping_cleverpoint_geo_zone_id %}
+						<option value="{{ geo_zone.geo_zone_id }}" selected="selected">{{ geo_zone.name }}</option>
+						{% else %}
+						<option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>
+						{% endif %}
+						{% endfor %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_status" id="input-status" class="form-control">
+						{% if shipping_cleverpoint_status %}
+						<option value="1" selected="selected">{{ text_enabled }}</option>
+						<option value="0">{{ text_disabled }}</option>
+						{% else %}
+						<option value="1">{{ text_enabled }}</option>
+						<option value="0" selected="selected">{{ text_disabled }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-mode">{{ entry_mode }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_mode" id="input-mode" class="form-control">
+						{% if shipping_cleverpoint_mode == 'production' %}
+							<option value="production" selected="selected">{{ text_live }}</option>
+							<option value="test">{{ text_trial }}</option>
+						{% else %}
+							<option value="production">{{ text_live }}</option>
+							<option value="test" selected="selected">{{ text_trial }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-mode">{{ entry_layout }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_layout" id="input-mode" class="form-control">
+						{% if shipping_cleverpoint_layout == 'inline' %}
+							<option value="inline" selected="selected">{{ text_inline }}</option>
+							<option value="modal">{{ text_modal }}</option>
+						{% else %}
+							<option value="inline">{{ text_inline }}</option>
+							<option value="modal" selected="selected">{{ text_modal }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-fee">{{ entry_fee }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_fee" id="input-fee" class="form-control">
+						{% if shipping_cleverpoint_fee %}
+						<option value="1" selected="selected">{{ text_client }}</option>
+						<option value="0">{{ text_store }}</option>
+						{% else %}
+						<option value="1">{{ text_client }}</option>
+						<option value="0" selected="selected">{{ text_store }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+					<div class="col-sm-10">
+					  <input type="text" name="shipping_cleverpoint_sort_order" value="{{ shipping_cleverpoint_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-payment_modules"><span>{{ entry_payment_modules }}</span></label>
+					<div class="col-sm-10">
+					  <div class="well well-sm" style="height: 150px; overflow: auto;"> 
+						{% for payment_module in payment_modules %}
+						  <div class="checkbox">
+							<label> {% if payment_module.code in shipping_cleverpoint_payment_modules %}
+							  <input type="checkbox" name="shipping_cleverpoint_payment_modules[]" value="{{ payment_module.code }}"
+								checked="checked" />
+							  {{ payment_module.name }}
+							  {% else %}
+							  <input type="checkbox" name="shipping_cleverpoint_payment_modules[]" value="{{ payment_module.code }}" />
+							  {{ payment_module.name }}
+							  {% endif %} </label>
+						  </div>
+						{% endfor %}
+					  </div>
+					  {% if error_complete_status %}
+						<div class="text-danger">{{ error_complete_status }}</div>
+					  {% endif %}
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-shipping_modules"><span>{{ entry_shipping_modules }}</span></label>
+					<div class="col-sm-10">
+					  <div class="well well-sm" style="height: 150px; overflow: auto;"> 
+						{% for shipping_module in shipping_modules %}
+						  <div class="checkbox">
+							<label> {% if shipping_module.code in shipping_cleverpoint_shipping_modules %}
+							  <input type="checkbox" name="shipping_cleverpoint_shipping_modules[]" value="{{ shipping_module.code }}"
+								checked="checked" />
+							  {{ shipping_module.name }}
+							  {% else %}
+							  <input type="checkbox" name="shipping_cleverpoint_shipping_modules[]" value="{{ shipping_module.code }}" />
+							  {{ shipping_module.name }}
+							  {% endif %} </label>
+						  </div>
+						{% endfor %}
+					  </div>
+					  {% if error_complete_status %}
+						<div class="text-danger">{{ error_complete_status }}</div>
+					  {% endif %}
+					</div>
+				  </div>				  
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-category">{{ entry_category_exclude }}</label>
+					<div class="col-sm-10">
+					  <input type="text" name="category" value="" placeholder="{{ entry_category_exclude }}" id="input-category" class="form-control"/>
+					  <div id="product-category" class="well well-sm" style="height: 150px; overflow: auto;"> 
+						{% for product_category in shipping_cleverpoint_categories %}
+						  <div id="product-category{{ product_category.category_id }}"><i class="fa fa-minus-circle"></i> {{ product_category.name }}
+							<input type="hidden" name="shipping_cleverpoint_categories[]" value="{{ product_category.category_id }}"/>
+						  </div>
+						{% endfor %}
+						</div>
+					</div>
+				  </div>				  
+			  </div>
+			  <div class="tab-pane" id="tab-data">
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-headerbar">{{ entry_headerbar }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_headerbar" id="input-headerbar" class="form-control">
+						{% if shipping_cleverpoint_headerbar %}
+						<option value="1" selected="selected">{{ text_enabled }}</option>
+						<option value="0">{{ text_disabled }}</option>
+						{% else %}
+						<option value="1">{{ text_enabled }}</option>
+						<option value="0" selected="selected">{{ text_disabled }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-addressbar">{{ entry_addressbar }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_addressbar" id="input-addressbar" class="form-control">
+						{% if shipping_cleverpoint_addressbar %}
+						<option value="1" selected="selected">{{ text_enabled }}</option>
+						<option value="0">{{ text_disabled }}</option>
+						{% else %}
+						<option value="1">{{ text_enabled }}</option>
+						<option value="0" selected="selected">{{ text_disabled }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-pointlist">{{ entry_pointlist }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_pointlist" id="input-pointlist" class="form-control">
+						{% if shipping_cleverpoint_pointlist %}
+						<option value="1" selected="selected">{{ text_enabled }}</option>
+						<option value="0">{{ text_disabled }}</option>
+						{% else %}
+						<option value="1">{{ text_enabled }}</option>
+						<option value="0" selected="selected">{{ text_disabled }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-singleselect">{{ entry_singleselect}}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_singleselect" id="input-pointlist" class="form-control">
+						{% if shipping_cleverpoint_singleselect %}
+						<option value="1" selected="selected">{{ text_enabled }}</option>
+						<option value="0">{{ text_disabled }}</option>
+						{% else %}
+						<option value="1">{{ text_enabled }}</option>
+						<option value="0" selected="selected">{{ text_disabled }}</option>
+						{% endif %}
+					  </select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label class="col-sm-2 control-label" for="input-pointinfotype">{{ entry_pointinfotype }}</label>
+					<div class="col-sm-10">
+					  <select name="shipping_cleverpoint_pointinfotype" id="input-pointinfotype" class="form-control">
+						<option value="docked" {% if shipping_cleverpoint_pointinfotype == 'docked' %}selected="selected"{% endif %}>{{ text_docked }}</option>
+						<option value="dockedSmall" {% if shipping_cleverpoint_pointinfotype == 'dockedSmall' %}selected="selected"{% endif %}>{{ text_docked_small }}</option>
+						<option value="floating" {% if shipping_cleverpoint_pointinfotype == 'floating' %}selected="selected"{% endif %}>{{ text_floating }}</option>
+					  </select>
+					</div>
+				  </div>
+			  </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  // Category
+  $('input[name=\'category\']').autocomplete({
+	  'source': function(request, response) {
+		  $.ajax({
+			  url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+			  dataType: 'json',
+			  success: function(json) {
+				  response($.map(json, function(item) {
+					  return {
+						  label: item['name'],
+						  value: item['category_id']
+					  }
+				  }));
+			  }
+		  });
+	  },
+	  'select': function(item) {
+		  $('input[name=\'category\']').val('');
+
+		  $('#product-category' + item['value']).remove();
+
+		  $('#product-category').append('<div id="product-category' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="shipping_cleverpoint_categories[]" value="' + item['value'] + '" /></div>');
+	  }
+  });
+
+  $('#product-category').delegate('.fa-minus-circle', 'click', function() {
+	  $(this).parent().remove();
+  });
+</script>
+{{ footer }}

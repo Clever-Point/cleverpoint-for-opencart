@@ -1,0 +1,244 @@
+{% if layout == 'modal' %}
+	<div id="clevermodal" class="modal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-body"></div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-success" data-dismiss="modal">{{ text_confirm_cleverpoint }}</button>
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">{{ text_cancel_cleverpoint }}</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+{% endif %}
+<script type="text/javascript">
+	function getCosts(){
+		$.ajax({
+			url: 'index.php?route=extension/shipping/cleverpoint/getCosts',
+			type: 'get',
+			cache: false,
+			success: function(html) {
+				$('#cleverpointcosts').html(html);
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+			}
+		});	
+	}
+	
+	function toggleCleverMapVisibility() {
+		{% if layout == 'modal' %}
+			$('#cleverpoint').show();
+			var selectedShippingMethod = $('input[name="shipping_method"]:checked').val();
+			if (selectedShippingMethod === 'cleverpoint.cleverpoint') {
+				$('#triggerClevermap').show();
+			} else {
+				$('#triggerClevermap').hide();
+			}
+		{% else %}
+			var selectedShippingMethod = $('input[name="shipping_method"]:checked').val();
+			if (selectedShippingMethod === 'cleverpoint.cleverpoint') {
+				$('#cleverpoint').show();
+			} else {
+				$('#cleverpoint').hide();
+			}
+		{% endif %}
+	}
+	
+	function renderCp(callback) {
+		var cleverPointDiv = $("<div>").attr({
+			"class": "cleverpoint",
+			"id": "cleverpoint",
+			"style": "display: none;"
+		});
+		
+		var radioDiv = $('.radio, #shipping-method');
+		var cleverModal = $('#clevermodal').find('.modal-body');
+		var targetRadio = radioDiv.find('input[name="shipping_method"][value="cleverpoint.cleverpoint"]');
+		var targetRadioDiv = targetRadio.closest('div');
+		
+		var targetLabel = targetRadio.closest('label');
+		if (targetLabel.length == 0) {
+			targetLabel = radioDiv.find('label[for="cleverpoint.cleverpoint"]:first');
+		}
+		
+		if($('.checkout-section.shipping-payment').length) {
+			targetRadioDiv = $('.checkout-section.shipping-payment');
+		}
+		
+		if (targetRadioDiv.length > 0) {
+			$('#clevermap').html('');
+			{% if layout == 'inline' %}
+				cleverPointDiv.appendTo(targetRadioDiv);
+			{% else %}
+				cleverModal.html(cleverPointDiv);
+			{% endif %}
+		}
+		
+		{% if layout == 'modal' %}
+			if(!$('#triggerClevermap').length) {
+				targetLabel.append('<div><a class="btn btn-primary" id="triggerClevermap" style="display:none;">{{ text_cleverpoint_modal_btn }}</a></div>');
+			}
+		{% endif %}
+		
+		cleverPointDiv.load('index.php?route=extension/shipping/cleverpoint/renderClevermap', function(){
+			toggleCleverMapVisibility();
+		});
+		
+		if (callback && typeof callback === 'function') {
+			callback();
+		}		
+	}
+	
+    $(document).ready(function() {
+		renderCp();
+		$(document).ajaxComplete(function(event, xhr, settings) {
+			if (
+				(
+					settings.url.toLowerCase().indexOf('/shipping_method') !== -1 &&
+					settings.url.toLowerCase().indexOf('/shipping_method/save') === -1
+				) ||
+				settings.url.toLowerCase().indexOf('journal3/checkout/save') !== -1
+			) {
+				renderCp();
+			}
+		});
+        toggleCleverMapVisibility();
+        $('body').on('change','input[name="shipping_method"]',function() {
+            toggleCleverMapVisibility();
+        });
+    });
+	
+	$('body').on('change','#cleverpoint input[name=\'shipping_method_cleverpoint\'], #cleverpoint select[name=\'shipping_method_cleverpoint\']', function() {
+		
+		let shipping_method = $(this).val();
+		
+		var post_data = {
+			shipping_method: shipping_method
+		};		
+		
+		$.ajax({
+			url: 'index.php?route=extension/shipping/cleverpoint/setShippingMethod',
+			type: 'post',
+			data: JSON.stringify(post_data),
+			contentType: 'application/json',
+			dataType: 'json',
+			cache: false,
+			complete: function () {
+				getCosts();
+			},			
+			success: function(json) {
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+			}
+		});		
+	});
+	
+	$('body').on('click','#triggerClevermap', function(e) {
+		e.preventDefault();
+		renderCp(function() {
+			$('#clevermodal').modal('show');
+		});
+	});
+</script>
+<style type="text/css">
+	div#cleverwrap {
+		display: flex;
+		flex-direction: column;
+	}
+	div#cleverpoint {
+		margin-top: 1rem;
+	}
+	div#clevermap {
+		border-radius: 5px;
+		overflow: hidden;
+		margin-bottom:1rem;
+	}
+	.cleverpoint_methods {
+		padding-left: 2rem;
+		border-left: solid 1px rgba(0,0,0,0.1);
+	}
+	.cleverpoint_methods > h2 {
+		font-size: 2rem;
+		color: #1e4079;
+		font-weight: bold;
+	}
+	#cleverpoint {
+		border: solid 2px #1e4079;
+		padding: 1.5rem;
+		border-radius:10px;
+		width:100%;
+	}
+	div#cleverpoint_locker {
+		background: #009cad;
+		display: inline-flex;
+		padding: 0 1rem;
+		color: #fff;
+		border-radius: 0.5rem;
+		margin-bottom: 1rem;
+		font-size: 11px;
+		width: 100%;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	div#cleverpointcosts ul {
+		margin: 0;
+		padding: 0;
+		list-style-position: inside;
+		border-top: solid 1px rgba(0,0,0,0.1);
+		padding-top: 1rem;
+		margin-top: 1rem;
+	}
+	div#cleverpointcosts ul li b {
+		color: #1e4079;
+	}
+	.cleverpoint_methods .radio {
+		margin-bottom: 0.5rem;
+	}
+	div#clevermodal .modal-content {
+		padding: 0;
+		margin: 0;
+		background: none;
+		border: none;
+		box-shadow: none;
+	}
+	div#clevermodal .modal-content .modal-body {
+		background: none;
+		padding: 0;
+		margin: 0;
+	}
+	#clevermodal div#cleverpoint {
+		background: #fff;
+	}
+	a#triggerClevermap {
+		background: #1e4079;
+		border: none;
+		margin-top: 0.5rem;
+		padding: 0.75rem 1.5rem;
+	}
+	div#clevermodal .modal-footer {
+		background: #fff;
+		border-radius: 1rem;
+		margin-top: 1rem;
+		display: flex;
+		justify-content: center;
+	}
+	div#clevermodal .modal-footer button.btn.btn-success {
+		background: #1e4079;
+		font-weight: bold;
+		border: none;
+		min-width: 150px;
+	}
+	div#clevermodal .modal-footer button.btn.btn-secondary {
+		font-weight: bold;
+		border: none;
+		min-width: 150px;
+		background: #DDD;
+		color:#111;
+	}
+	div#clevermodal .modal-dialog {
+		width: 1200px;
+		max-width: 100%;
+	}
+</style>
