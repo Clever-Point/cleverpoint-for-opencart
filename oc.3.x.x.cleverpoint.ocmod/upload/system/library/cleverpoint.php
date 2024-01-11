@@ -13,7 +13,7 @@ class CleverPoint {
 		
 		$this->registry = new Registry();	
 		$this->loader = new Loader($registry);
-		$this->registry->set('load', $loader);
+		$this->registry->set('load', $this->loader);
 		$this->config = new Config();
 		$this->registry->set('config', $this->config);
 		
@@ -21,7 +21,7 @@ class CleverPoint {
 		$registry->set('db', $db);		
 		
 		$query = $db->query("SELECT * FROM " . DB_PREFIX . "setting");
-		
+
 		$clever_config = [];
 		
 		foreach ($query->rows as $setting) {
@@ -31,7 +31,7 @@ class CleverPoint {
 				$clever_config[$setting['key']] = json_decode($setting['value'], true);
 			}
 		}
-		
+	
         $mode = $clever_config['shipping_cleverpoint_mode'];
         $this->ApiKey = ($mode == 'production') ? $clever_config['shipping_cleverpoint_livekey'] : $clever_config['shipping_cleverpoint_testkey'];
 		
@@ -65,7 +65,7 @@ class CleverPoint {
 		
 		$params['awbs'] = $vouchers;
 		
-		$result = $this->execute('GET', $command, $params, $json);
+		$result = $this->execute('GET', $command, $params);
 		
 		return $result;
 	}	
@@ -76,7 +76,7 @@ class CleverPoint {
 		
 		$params = array();
 		
-		$result = $this->execute('GET', $command, $params, $json);
+		$result = $this->execute('GET', $command, $params);
 		
 		return $result;
 	}	
@@ -87,7 +87,7 @@ class CleverPoint {
 		
 		$params = array();
 		
-		$result = $this->execute('GET', $command, $params, $json);
+		$result = $this->execute('GET', $command, $params);
 		
 		return $result;
 	}	
@@ -98,7 +98,7 @@ class CleverPoint {
 		
 		$params = array();
 		
-		$result = $this->execute('POST', $command, $params, $json);
+		$result = $this->execute('POST', $command, $params);
 		
 		return $result;
 	}	
@@ -109,7 +109,7 @@ class CleverPoint {
 		
 		$params = array();
 		
-		$result = $this->execute('GET', $command, $params, $json);
+		$result = $this->execute('GET', $command, $params);
 		
 		return $result;
 	}
@@ -141,10 +141,8 @@ class CleverPoint {
 			
 			if ($this->ApiKey) {
 				$curl_options[CURLOPT_HTTPHEADER][] = 'Authorization: ApiKey ' . $this->ApiKey;
-			} elseif ($this->client_id && $this->secret) {
-				$curl_options[CURLOPT_USERPWD] = $this->client_id . ':' . $this->secret;
-			} elseif ($this->client_id) {
-				$curl_options[CURLOPT_USERPWD] = $this->client_id;
+			} else {
+				return false;
 			}
 
 			switch (strtolower(trim($method))) {

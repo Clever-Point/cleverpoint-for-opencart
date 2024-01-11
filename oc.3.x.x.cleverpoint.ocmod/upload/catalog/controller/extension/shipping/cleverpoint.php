@@ -181,11 +181,13 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 		$cleverpoint_cods = $this->config->get('shipping_cleverpoint_payment_modules');
 		if (strpos($route, 'payment_method') !== false) {
 			if(isset($this->session->data['shipping_method']) && $this->session->data['shipping_method']['code'] == 'cleverpoint.cleverpoint') {
-				if(isset($this->session->data['cleverpoint_station']) && $this->session->data['cleverpoint_station']['is_cod'] != true) {
+				if(isset($this->session->data['cleverpoint_station']) && isset($this->session->data['cleverpoint_station']['is_cod']) && $this->session->data['cleverpoint_station']['is_cod'] != true) {
 					//unset($args['payment_methods']['cod']);
-					foreach($args['payment_methods'] as $code => $payment_method) {
-						if(in_array($payment_method['code'],$cleverpoint_cods )) {
-							unset($args['payment_methods'][$code]);
+					if(isset($args['payment_methods']) && $args['payment_methods']) {
+						foreach($args['payment_methods'] as $code => $payment_method) {
+							if(in_array($payment_method['code'],$cleverpoint_cods )) {
+								unset($args['payment_methods'][$code]);
+							}
 						}
 					}
 				}
@@ -223,10 +225,12 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 							continue;
 						}						
 					} else {
-						foreach($quote['quote'] as $code => $quote_data) {
-							if (is_array($activeMethods) && !in_array($quote_data['code'], $activeMethods)) {
-								unset($quote['quote'][$code]);
-							}	
+						if(isset($quote['quote']) && $quote['quote']) {
+							foreach($quote['quote'] as $code => $quote_data) {
+								if (is_array($activeMethods) && !in_array($quote_data['code'], $activeMethods)) {
+									unset($quote['quote'][$code]);
+								}	
+							}
 						}
 					}
 					

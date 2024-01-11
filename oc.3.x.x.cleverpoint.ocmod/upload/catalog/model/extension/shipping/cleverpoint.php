@@ -19,12 +19,14 @@ class ModelExtensionShippingCleverpoint extends Model {
 		$this->load->model('catalog/product');
 		foreach($cart_products as $cart_product) {
 			$product_categories = $this->model_catalog_product->getCategories($cart_product['product_id']);
-			foreach ($product_categories as $category) {
-				if (in_array($category['category_id'], $exclude_categories)) {
-					$status = false;
-					break;
-				}			  
-			}			  
+			if($exclude_categories) {
+				foreach ($product_categories as $category) {
+					if (in_array($category['category_id'], $exclude_categories)) {
+						$status = false;
+						break;
+					}			  
+				}			
+			}			
 		}
 
 		if ($status) { 
