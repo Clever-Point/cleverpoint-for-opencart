@@ -119,8 +119,7 @@
 		$.ajax({
 			url: 'index.php?route=extension/shipping/cleverpoint/setShippingMethod',
 			type: 'post',
-			data: JSON.stringify(post_data),
-			contentType: 'application/json',
+			data: post_data,
 			dataType: 'json',
 			cache: false,
 			complete: function () {

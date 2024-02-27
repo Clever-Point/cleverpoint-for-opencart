@@ -82,7 +82,7 @@ class ModelExtensionShippingCleverpoint extends Model {
 	public function addCleverpointOrder($order_id = NULL, $cleverpoint_station = []) {
 		if($order_id) {
 			$sql = "
-				REPLACE INTO " . DB_PREFIX . "cleverpoint_requests
+				REPLACE INTO `" . DB_PREFIX . "cleverpoint_requests`
 				
 				SET
 					order_id = '".(int)$order_id."',
@@ -100,7 +100,7 @@ class ModelExtensionShippingCleverpoint extends Model {
 			$query = $this->db->query($sql);
 			
 			$this->db->query("
-				UPDATE " . DB_PREFIX . "order
+				UPDATE `" . DB_PREFIX . "order`
 				
 				SET
 					shipping_address_1 = '" . $this->db->escape($cleverpoint_station['station_address']) . "',

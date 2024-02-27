@@ -82,6 +82,7 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 	}
 	
 	public function setShippingMethod() {
+		$json = [];
 		if(isset($this->request->post['shipping_method']) && $this->request->post['shipping_method']) {
 			$shipping = explode('.', $this->request->post['shipping_method']);
 
