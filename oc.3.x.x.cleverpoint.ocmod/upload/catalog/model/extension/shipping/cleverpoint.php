@@ -10,7 +10,7 @@ class ModelExtensionShippingCleverpoint extends Model {
 		
 		$this->load->library('cleverpoint');
 		$cleverpoint = new CleverPoint($this->registry);
-		$cleverpoint->getShipment();
+		//$cleverpoint->getShipment();
 		
 		//filter excluded categories
 		$exclude_categories = $this->config->get('shipping_cleverpoint_categories');
