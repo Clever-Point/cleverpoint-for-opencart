@@ -45,11 +45,16 @@
 	}
 	
 	function renderCp(callback) {
-		var cleverPointDiv = $("<div>").attr({
-			"class": "cleverpoint",
-			"id": "cleverpoint",
-			"style": "display: none;"
-		});
+	
+		var cleverPointDiv = $("#cleverpoint");
+
+		if (!cleverPointDiv.length) {
+			cleverPointDiv = $("<div>").attr({
+				"class": "cleverpoint",
+				"id": "cleverpoint",
+				"style": "display: none;"
+			});
+		}
 		
 		var radioDiv = $('.radio, #shipping-method');
 		var cleverModal = $('#clevermodal').find('.modal-body');
@@ -138,6 +143,27 @@
 			$('#clevermodal').modal('show');
 		});
 	});
+	
+	$(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
+		if (ajaxOptions.url === "index.php?route=journal3/checkout/cart_update") {
+			let shipping_method = $('input[name="shipping_method_cleverpoint"]:checked').val();
+			$.ajax({
+				url: 'index.php?route=extension/shipping/cleverpoint/setShippingMethod',
+				type: 'post',
+				data: JSON.stringify({ shipping_method: shipping_method }),
+				contentType: 'application/json',
+				dataType: 'json',
+				cache: false,
+				complete: function () {
+					getCosts();
+				},		
+				success: function(json) {
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+				}
+			});
+		}
+	});	
 </script>
 <style type="text/css">
 	div#cleverwrap {

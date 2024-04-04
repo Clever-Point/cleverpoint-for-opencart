@@ -44,13 +44,15 @@
             <search><![CDATA[$json['error'] = $error ? $error : null;]]></search>
             <add position="before" offset="1"><![CDATA[
 			//CLEVERPOINT
-			$this->load->language('extension/shipping/cleverpoint');
-			if (isset($this->request->post['order_data']['shipping_code']) && $this->request->post['order_data']['shipping_code'] == 'cleverpoint.cleverpoint') {
-				if (!isset($this->session->data['cleverpoint_station']) || !$this->session->data['cleverpoint_station']['shipping_method']) {
-					$error['shipping_code'] = $this->language->get('error_cleverpoint_method');
-				}				
-				if (!isset($this->session->data['cleverpoint_station']) || !isset($this->session->data['cleverpoint_station']['station_id']) || !$this->session->data['cleverpoint_station']['station_id']) {
-					$error['shipping_code'] = $this->language->get('error_cleverpoint');
+			if (!empty($this->request->get['confirm']) && $this->request->get['confirm'] == 'true') {
+				$this->load->language('extension/shipping/cleverpoint');
+				if (isset($this->request->post['order_data']['shipping_code']) && $this->request->post['order_data']['shipping_code'] == 'cleverpoint.cleverpoint') {
+					if (!isset($this->session->data['cleverpoint_station']) || !$this->session->data['cleverpoint_station']['shipping_method']) {
+						$error['shipping_code'] = $this->language->get('error_cleverpoint_method');
+					}				
+					if (!isset($this->session->data['cleverpoint_station']) || (!isset($this->session->data['cleverpoint_station']['station_id'])) ) {
+						$error['shipping_code'] = $this->language->get('error_cleverpoint');
+					}
 				}
 			}
         ]]></add>
