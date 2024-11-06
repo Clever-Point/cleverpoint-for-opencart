@@ -14,6 +14,7 @@ class ModelExtensionShippingCleverpoint extends Model {
 			  `station_name` varchar(255) DEFAULT NULL,
 			  `station_prefix` varchar(255) DEFAULT NULL,
 			  `station_address` text DEFAULT NULL,
+			  `station_phone` varchar(255) DEFAULT NULL,
 			  `station_city` varchar(255) DEFAULT NULL,
 			  `station_postcode` varchar(255) DEFAULT NULL,
 			  `station_zone` varchar(255) DEFAULT NULL,

@@ -90,6 +90,7 @@ class ModelExtensionShippingCleverpoint extends Model {
 					station_prefix = '".$cleverpoint_station['station_prefix']."',
 					station_name = '".$this->db->escape($cleverpoint_station['station_name'])."',
 					station_address = '".$this->db->escape($cleverpoint_station['station_address'])."',
+					station_phone = '".$this->db->escape($cleverpoint_station['station_phone'])."',
 					station_city = '".$cleverpoint_station['station_city']."',
 					station_postcode = '".$cleverpoint_station['station_postcode']."',
 					station_zone = '".$cleverpoint_station['station_zone']."',

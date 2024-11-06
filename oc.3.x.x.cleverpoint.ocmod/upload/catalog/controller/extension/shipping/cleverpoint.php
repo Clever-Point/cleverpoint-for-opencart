@@ -66,6 +66,7 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 	public function setStation() {
 		$this->session->data['cleverpoint_station']['station_name'] = $this->request->post['station_name'];
 		$this->session->data['cleverpoint_station']['station_address'] = $this->request->post['station_address'];
+		$this->session->data['cleverpoint_station']['station_phone'] = $this->request->post['station_phone'];
 		$this->session->data['cleverpoint_station']['station_city'] = $this->request->post['station_city'];
 		$this->session->data['cleverpoint_station']['station_postcode'] = $this->request->post['station_postcode'];
 		$this->session->data['cleverpoint_station']['station_zone'] = $this->request->post['station_zone'];

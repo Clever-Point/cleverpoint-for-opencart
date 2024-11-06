@@ -75,6 +75,7 @@
 		
 			var station_name = point.ShortName;
 			var station_address = point.AddressLine1;
+			var station_phone = point.Phones;
 			var station_city = point.City;
 			var station_postcode = point.ZipCode;
 			var station_zone = point.Perfecture;
@@ -85,6 +86,7 @@
 			var post_data = {
 				station_name: station_name,
 				station_address: station_address,
+				station_phone: station_phone,
 				station_city: station_city,
 				station_postcode: station_postcode,
 				station_zone: station_zone,
