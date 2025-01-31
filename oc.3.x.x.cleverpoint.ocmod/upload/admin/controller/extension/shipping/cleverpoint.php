@@ -478,6 +478,7 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 			'Phones' => $order_info['telephone'],
 			'NotificationPhone' => $order_info['telephone'],
 			'Emails' => $order_info['email'],
+			'NotificationEmail' => $order_info['email'],
 			'Reference' => $order_info['order_id']
 		);
 		
