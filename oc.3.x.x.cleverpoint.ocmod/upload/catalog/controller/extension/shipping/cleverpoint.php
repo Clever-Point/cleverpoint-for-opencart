@@ -80,6 +80,14 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 			$data['cleverpoint_costs'] = $this->session->data['cleverpoint_station']['costs'];
 			$this->response->setOutput($this->load->view('extension/shipping/cleverpoint_costs', $data));
 		}
+		
+		if(isset($this->session->data['order_id']) && isset($this->session->data['cleverpoint_station']) && isset($this->session->data['cleverpoint_station']['station_id']) && $this->session->data['order_id'] && $this->session->data['cleverpoint_station']['station_id']) {
+
+			$this->load->model('extension/shipping/cleverpoint');
+
+			$this->model_extension_shipping_cleverpoint->addCleverpointOrder($this->session->data['order_id'], $this->session->data['cleverpoint_station']);
+
+		}
 	}
 	
 	public function setShippingMethod() {
