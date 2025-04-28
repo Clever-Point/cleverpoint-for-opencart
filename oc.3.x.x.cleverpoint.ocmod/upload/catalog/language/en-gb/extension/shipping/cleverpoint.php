@@ -1,13 +1,15 @@
 <?php
 // Text
-$_['text_title']       = 'Clever Point';
-$_['text_description'] = 'Παραλαβή από σημείο Clever Point';
-$_['error_cleverpoint'] 	= 'Δεν έχετε επιλέξει σταθμό Cleverpoint!';
-$_['error_cleverpoint_method'] 	= 'Δεν έχετε επιλέξει μέθοδο αποστολής Cleverpoint!';
-$_['cleverpoint_shipping_cost'] 	= 'Κόστος Μεταφορικών';
-$_['cleverpoint_fee_cost'] 	= 'Κόστος Υπηρεσίας';
-$_['text_selected_point'] 	= 'Επιλεγμένο σημείο';
+$_['text_title']       = 'Cleverpoint';
+$_['text_description'] = 'Pickup from a Cleverpoint location';
+$_['error_cleverpoint'] = 'You have not selected a Cleverpoint station!';
+$_['error_cleverpoint_method'] = 'You have not selected a Cleverpoint shipping method!';
+$_['cleverpoint_shipping_cost'] = 'Shipping Cost';
+$_['cleverpoint_fee_cost'] = 'Service Fee';
+$_['text_selected_point'] = 'Selected Point';
 
-$_['text_cleverpoint_modal_btn'] = 'Επιλογή σημείου <b>Clever Point</b>';
-$_['text_confirm_cleverpoint'] 	= 'Επιβεβαίωση';
-$_['text_cancel_cleverpoint'] 	= 'Κλείσιμο';
+$_['text_cleverpoint_modal_btn'] = 'Select a <b>Cleverpoint</b> location';
+$_['text_confirm_cleverpoint'] = 'Confirm';
+$_['text_cancel_cleverpoint'] = 'Close';
+$_['text_cleverpoint_no_address'] = 'No shipping methods are currently available. Please ensure that all shipping address details have been entered correctly.';
+?>

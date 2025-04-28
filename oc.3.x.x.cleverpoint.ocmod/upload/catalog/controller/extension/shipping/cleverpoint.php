@@ -17,7 +17,11 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 	public function addClevermap($route, &$args, &$output)
 	{
 		$this->load->language('extension/shipping/cleverpoint');
+		
 		$data['layout'] = $this->config->get('shipping_cleverpoint_layout');
+		$data['theme'] = $this->config->get('config_theme');
+		$data['logged'] = $this->customer->isLogged();
+
 		if (strpos($route, 'footer') !== false) {
 			$output = str_replace('</body>', $this->load->view('extension/shipping/cleverpoint', $data).'</body>', $output);
 		}
@@ -82,12 +86,27 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 		}
 		
 		if(isset($this->session->data['order_id']) && isset($this->session->data['cleverpoint_station']) && isset($this->session->data['cleverpoint_station']['station_id']) && $this->session->data['order_id'] && $this->session->data['cleverpoint_station']['station_id']) {
-
 			$this->load->model('extension/shipping/cleverpoint');
-
 			$this->model_extension_shipping_cleverpoint->addCleverpointOrder($this->session->data['order_id'], $this->session->data['cleverpoint_station']);
 
 		}
+	}
+	
+	public function getQuote() {
+		
+		$quote_text = null;
+		if ($this->config->get('shipping_cleverpoint_status')) {
+			$this->load->model('extension/shipping/cleverpoint');
+
+			$quote = $this->{'model_extension_shipping_cleverpoint'}->getQuote($this->session->data['shipping_address']);
+			
+			if ($quote) {		
+				if(isset($quote['quote']['cleverpoint']) && $quote['quote']['cleverpoint']) {					
+					$quote_text = $quote['quote']['cleverpoint']['title'].' - '.$quote['quote']['cleverpoint']['text'];
+				}
+			}
+		}
+		echo $quote_text;
 	}
 	
 	public function setShippingMethod() {
@@ -203,7 +222,7 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 				}
 			}		
 		}
-	}	
+	}
 	
 	private function getShippingMethods() {
 		$this->load->language('checkout/checkout');

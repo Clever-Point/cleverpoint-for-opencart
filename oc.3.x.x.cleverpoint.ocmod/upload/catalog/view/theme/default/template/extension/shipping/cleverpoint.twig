@@ -23,8 +23,32 @@
 			error: function(xhr, ajaxOptions, thrownError) {
 			}
 		});	
+		{% if theme == 'digital4u' %}
+			$.ajax({
+				url: 'index.php?route=extension/shipping/cleverpoint/getQuote',
+				type: 'get',
+				cache: false,
+				success: function(html) {
+					if(html) {
+						$('input[name="shipping_method"][value="cleverpoint.cleverpoint"]').closest('label').find('p').text(html);
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+				}
+			});	
+		{% endif %}
 	}
-
+	
+	{% if theme == 'digital4u' %}
+	$('#clevermodal').on('hidden.bs.modal', function () {
+		{% if logged %}
+			$('select[name="address_id"]').trigger('change');
+		{% else %}
+			$('#input-payment-address-1').trigger('change');
+		{% endif %}
+	});
+	{% endif %}
+	
 	function toggleCleverMapVisibility() {
 		{% if layout == 'modal' %}
 			$('#cleverpoint').show();
@@ -87,7 +111,6 @@
 		
 		cleverPointDiv.load('index.php?route=extension/shipping/cleverpoint/renderClevermap', function(){
 			toggleCleverMapVisibility();
-			$('input[name="shipping_method_cleverpoint"]:first').prop('checked', true).trigger('change');
 		});
 		
 		if (callback && typeof callback === 'function') {
@@ -97,7 +120,6 @@
 	
     $(document).ready(function() {
 		renderCp();
-		getCosts();
 		$(document).ajaxComplete(function(event, xhr, settings) {
 			if (
 				(
@@ -126,8 +148,7 @@
 		$.ajax({
 			url: 'index.php?route=extension/shipping/cleverpoint/setShippingMethod',
 			type: 'post',
-			data: JSON.stringify(post_data),
-			contentType: 'application/json',
+			data: post_data,
 			dataType: 'json',
 			cache: false,
 			complete: function () {
@@ -166,8 +187,7 @@
 				}
 			});
 		}
-	});
-
+	});	
 </script>
 <style type="text/css">
 	div#cleverwrap {

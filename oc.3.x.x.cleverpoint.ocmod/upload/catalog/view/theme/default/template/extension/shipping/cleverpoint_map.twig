@@ -30,6 +30,9 @@
 		{% endif %}
 	  {% endfor %}
 	{% endif %}
+	{% if not cleverpoint_shipping_methods %}
+		<div class="alert alert-danger alert-dismissible">{{ text_cleverpoint_no_address }}</div>
+	{% endif %}
 	<div id="cleverpointcosts"></div>
   </div>
 </div>
