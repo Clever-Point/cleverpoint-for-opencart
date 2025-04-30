@@ -11,6 +11,7 @@
 	  </div>
 	</div>
 {% endif %}
+
 <script type="text/javascript">
 	function getCosts(){
 		$.ajax({
@@ -40,13 +41,13 @@
 	}
 	
 	{% if theme == 'digital4u' %}
-	$('#clevermodal').on('hidden.bs.modal', function () {
-		{% if logged %}
-			$('select[name="address_id"]').trigger('change');
-		{% else %}
-			$('#input-payment-address-1').trigger('change');
-		{% endif %}
-	});
+		$('#clevermodal').on('hidden.bs.modal', function () {
+			{% if logged %}
+				$('select[name="address_id"]').trigger('change');
+			{% else %}
+				$('#input-payment-address-1').trigger('change');
+			{% endif %}
+		});
 	{% endif %}
 	
 	function toggleCleverMapVisibility() {
@@ -131,20 +132,24 @@
 				renderCp();
 			}
 		});
+		
         toggleCleverMapVisibility();
+		
         $('body').on('change','input[name="shipping_method"]',function() {
             toggleCleverMapVisibility();
         });
     });
 	
-	$('body').on('change','#cleverpoint input[name=\'shipping_method_cleverpoint\'], #cleverpoint select[name=\'shipping_method_cleverpoint\']', function() {
-		
-		let shipping_method = $(this).val();
-		
+	$('body').on('change', '#cleverpoint input[name="shipping_method_cleverpoint"], #cleverpoint select[name="shipping_method_cleverpoint"]', sendShippingMethod);
+	
+	function sendShippingMethod() {
+	
+		let shipping_method = $('#cleverpoint input[name="shipping_method_cleverpoint"]:checked, #cleverpoint select[name="shipping_method_cleverpoint"]').val();
+
 		var post_data = {
 			shipping_method: shipping_method
-		};		
-		
+		};
+
 		$.ajax({
 			url: 'index.php?route=extension/shipping/cleverpoint/setShippingMethod',
 			type: 'post',
@@ -153,13 +158,13 @@
 			cache: false,
 			complete: function () {
 				getCosts();
-			},			
+			},
 			success: function(json) {
 			},
 			error: function(xhr, ajaxOptions, thrownError) {
 			}
-		});		
-	});
+		});
+	}	
 	
 	$('body').on('click','#triggerClevermap', function(e) {
 		e.preventDefault();
@@ -188,6 +193,31 @@
 			});
 		}
 	});	
+	
+	if($('input[name="shipping_method"][value="cleverpoint.cleverpoint"]').length) {
+		$('#clevermodal').on('shown.bs.modal', function () {
+			validateCleverpoint();
+		});
+		
+		$('body').on('change', '#cleverPointLockerInput, #cleverpoint input[name="shipping_method_cleverpoint"], #cleverpoint select[name="shipping_method_cleverpoint"]', validateCleverpoint);
+		
+		function validateCleverpoint() {
+			
+			let noRadioSelected = $('#cleverpoint input[name="shipping_method_cleverpoint"]:checked').length === 0;
+			let lockerInputEmpty = $('#cleverPointLockerInput').val().trim() === '';
+
+			if (noRadioSelected || lockerInputEmpty) {
+				$('#clevermodal').find('button.btn.btn-success').prop('disabled', true);
+			} else {
+				$('#clevermodal').find('button.btn.btn-success').prop('disabled', false);
+			}
+		};	
+			
+		$(window).on('load', function() {
+			sendShippingMethod();
+			validateCleverpoint();
+		});	
+	}
 </script>
 <style type="text/css">
 	div#cleverwrap {

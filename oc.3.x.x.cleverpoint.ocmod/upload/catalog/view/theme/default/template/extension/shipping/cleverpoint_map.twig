@@ -6,6 +6,7 @@
 		<b>{{ text_selected_point }}</b>: {{ defaultLockerAddress }}
 	  {% endif %}
 	</div>
+	<input type="hidden" id="cleverPointLockerInput" value="{{ defaultLockerId }}">
   </div>
   <div class="cleverpoint_methods">
 	<h2>Επιλογή εταιρείας μεταφοράς δέματος προς CleverPoint</h2>
@@ -50,7 +51,6 @@
 		{% else %}
 			defaultAddress: null,
 		{% endif %}
-	   
 		
 		{% if defaultLockerId %}
 			defaultCleverPoint: '{{ defaultLockerId }}',
@@ -111,7 +111,9 @@
 			});
 
 			var lockerLoc = '<b>{{ text_selected_point }}</b>: ' + station_name + ' [' + station_address + ']';
+			
 			$('#cleverpoint_locker').html(lockerLoc);
+			$('#cleverPointLockerInput').val(station_id).trigger('change');
 		},
 		oninitialized: () => {
 			getCosts();
