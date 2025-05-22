@@ -50,6 +50,22 @@
 		});
 	{% endif %}
 	
+	{% if theme == 'digital4u' %}
+		$(document).on('click', '#collapse-checkout-confirm #order-final-button', function(e) {
+			var selectedShippingMethod = $('input[name="shipping_method"]:checked').val();
+
+			if (selectedShippingMethod === 'cleverpoint.cleverpoint') {
+				{% if logged %}
+					$('select[name="address_id"]').trigger('change');
+				{% else %}
+					$('#input-payment-address-1').trigger('change');
+				{% endif %}
+				
+				sendShippingMethod()
+			}
+		});
+	{% endif %}	
+	
 	function toggleCleverMapVisibility() {
 		{% if layout == 'modal' %}
 			$('#cleverpoint').show();
