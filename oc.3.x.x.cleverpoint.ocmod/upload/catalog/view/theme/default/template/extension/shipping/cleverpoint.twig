@@ -24,20 +24,35 @@
 			error: function(xhr, ajaxOptions, thrownError) {
 			}
 		});	
-		{% if theme == 'digital4u' %}
-			$.ajax({
-				url: 'index.php?route=extension/shipping/cleverpoint/getQuote',
-				type: 'get',
-				cache: false,
-				success: function(html) {
+		
+		//Additionally get the Quote
+		$.ajax({
+			url: 'index.php?route=extension/shipping/cleverpoint/getQuote',
+			type: 'get',
+			cache: false,
+			success: function(html) {
+				if(html) {
+					$('input[name="shipping_method"][value="cleverpoint.cleverpoint"]').each(function() {
+						var input = this;
+						var next = input.nextSibling;
+						while (next && next.nodeType === 3) {
+							var toRemove = next;
+							next = next.nextSibling;
+							toRemove.parentNode.removeChild(toRemove);
+						}
+						$(input).after(html);
+					});
+				}
+				
+				{% if theme == 'digital4u' %}
 					if(html) {
 						$('input[name="shipping_method"][value="cleverpoint.cleverpoint"]').closest('label').find('p').text(html);
 					}
-				},
-				error: function(xhr, ajaxOptions, thrownError) {
-				}
-			});	
-		{% endif %}
+				{% endif %}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+			}
+		});			
 	}
 	
 	{% if theme == 'digital4u' %}
@@ -128,6 +143,13 @@
 		
 		cleverPointDiv.load('index.php?route=extension/shipping/cleverpoint/renderClevermap', function(){
 			toggleCleverMapVisibility();
+			var $radios = $('input[name="shipping_method_cleverpoint"]');
+			var $checked = $radios.filter(':checked');
+			if ($checked.length > 0) {
+				$checked.first().trigger('change');
+			} else {
+				$radios.first().prop('checked', true).trigger('change');
+			}			
 		});
 		
 		if (callback && typeof callback === 'function') {

@@ -206,13 +206,27 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 		}
 	}
 	
+	private function toBoolean($value) {
+		if (
+			$value === false ||
+			$value === 0 ||
+			$value === '0' ||
+			$value === '' ||
+			$value === null ||
+			$value === 'false'
+		) {
+			return false;
+		}
+		return true;
+	}
+		
 	public function paymentMethods(&$route, &$args, &$output) {
 		$cleverpoint_cods = $this->config->get('shipping_cleverpoint_payment_modules');
 		if (strpos($route, 'payment_method') !== false) {
 			if(isset($this->session->data['shipping_method']) && $this->session->data['shipping_method']['code'] == 'cleverpoint.cleverpoint') {
-				if(isset($this->session->data['cleverpoint_station']) && isset($this->session->data['cleverpoint_station']['is_cod']) && $this->session->data['cleverpoint_station']['is_cod'] != true) {
+				if(isset($this->session->data['cleverpoint_station']) && isset($this->session->data['cleverpoint_station']['is_cod']) && $this->toBoolean($this->session->data['cleverpoint_station']['is_cod'] != true)) {
 					//unset($args['payment_methods']['cod']);
-					if(isset($args['payment_methods']) && $args['payment_methods']) {
+					if(isset($args['payment_methods']) && $args['payment_methods']) {					
 						foreach($args['payment_methods'] as $code => $payment_method) {
 							if(in_array($payment_method['code'],$cleverpoint_cods )) {
 								unset($args['payment_methods'][$code]);
@@ -221,6 +235,21 @@ class ControllerExtensionShippingCleverpoint extends Controller {
 					}
 				}
 			}		
+		}
+	}	
+	
+	public function paymentMethod(&$route, &$args, &$output) {
+		$cleverpoint_cods = $this->config->get('shipping_cleverpoint_payment_modules');
+		
+		if (
+			isset($this->session->data['shipping_method']) &&
+			$this->session->data['shipping_method']['code'] == 'cleverpoint.cleverpoint' &&
+			isset($this->session->data['cleverpoint_station']['is_cod']) &&
+			$this->toBoolean($this->session->data['cleverpoint_station']['is_cod']) != true
+		) {
+			if (isset($output['code']) && in_array($output['code'], $cleverpoint_cods)) {
+				$output = null;
+			}
 		}
 	}
 	

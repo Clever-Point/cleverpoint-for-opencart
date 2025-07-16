@@ -616,7 +616,8 @@ class ControllerExtensionShippingCleverpoint extends Controller {
         $this->model_setting_event->addEvent('cleverpoint', 'admin/view/sale/order_info/after', 'extension/shipping/cleverpoint/injectOrder');
         $this->model_setting_event->addEvent('cleverpoint', 'catalog/view/*/before', 'extension/shipping/cleverpoint/paymentMethods');
         $this->model_setting_event->addEvent('cleverpoint', 'catalog/model/checkout/order/addOrderHistory/before', 'extension/shipping/cleverpoint/addOrder');	
-        $this->model_setting_event->addEvent('cleverpoint', 'admin/view/common/column_left/before', 'extension/shipping/cleverpoint/adminMenu');	
+        $this->model_setting_event->addEvent('cleverpoint', 'admin/view/common/column_left/before', 'extension/shipping/cleverpoint/adminMenu');
+        $this->model_setting_event->addEvent('cleverpoint', 'catalog/model/extension/payment/*/getMethod/after', 'extension/shipping/cleverpoint/paymentMethod');
 		$this->model_extension_shipping_cleverpoint->install();
 	}	
 	
